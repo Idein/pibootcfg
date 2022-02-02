@@ -113,8 +113,6 @@ impl UBootConfigGenerator for DTparam {
             commands.push(fdt_command);
         }
 
-        dbg!(configs);
-
         Ok(commands)
     }
 }
