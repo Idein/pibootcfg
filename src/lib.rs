@@ -49,7 +49,7 @@ pub struct RPiConfig {
     configs: Option<HashMap<String, Vec<ConfigEntry>>>,
 }
 
-// TODO: U-Bootのconfigを現在は;で結合しているが、||や&&でも結合できるようデータ構造を変更する
+// TODO: U-Bootのconfigを現在は;で結合しているが、||や&&でも結合できるよう、戻り値をVec<String>から適切なものに変更する
 trait UBootConfigGenerator {
     fn generate_uboot_config(&self) -> Result<Vec<String>>;
 }
