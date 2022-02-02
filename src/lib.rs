@@ -1,20 +1,15 @@
 use anyhow::{anyhow, Context, Result};
 use log::info;
-use nom::character::complete::digit1;
-use nom::combinator::{map_res, recognize};
-use nom::AsChar;
-use std::{collections::HashMap, fs, path::PathBuf};
-
-extern crate nom;
 use nom::{
     branch::alt,
     bytes::complete::{tag, take_until, take_while},
-    character::complete::{multispace0, newline},
-    combinator::opt,
+    character::complete::{digit1, multispace0, newline},
+    combinator::{map_res, opt, recognize},
     multi::{many1, separated_list0, separated_list1},
     sequence::{delimited, preceded, separated_pair},
-    IResult,
+    AsChar, IResult,
 };
+use std::{collections::HashMap, fs, path::PathBuf};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum ConfigEntry {
