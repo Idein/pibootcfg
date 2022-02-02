@@ -50,11 +50,8 @@ pub struct RPiConfig {
 }
 
 // TODO: U-Bootのconfigを現在は;で結合しているが、||や&&でも結合できるよう、戻り値をVec<String>から適切なものに変更する
-trait UBootConfigGenerator {
-    fn generate_uboot_config(&self) -> Result<Vec<String>>;
-}
 
-impl UBootConfigGenerator for DTparam {
+impl DTparam {
     fn generate_uboot_config(&self) -> Result<Vec<String>> {
         let configs = &self.configs;
         let mut commands = Vec::new();
@@ -117,7 +114,7 @@ impl UBootConfigGenerator for DTparam {
     }
 }
 
-impl UBootConfigGenerator for DTOverlay {
+impl DTOverlay {
     fn generate_uboot_config(&self) -> Result<Vec<String>> {
         let overlay = &self.overlay;
         let configs = &self.configs;
@@ -150,7 +147,7 @@ impl UBootConfigGenerator for DTOverlay {
     }
 }
 
-impl UBootConfigGenerator for GpuMem {
+impl GpuMem {
     fn generate_uboot_config(&self) -> Result<Vec<String>> {
         // gpu_mem_*に対応したuboot configを出す
         let mut commands: Vec<String> = Vec::new();
