@@ -69,7 +69,7 @@ impl UBootConfigGenerator for DTparam {
         }
 
         for config in configs {
-            let hoge: String = match &*config.key {
+            let fdt_command: String = match &*config.key {
                 "act_led_trigger" => match &*config.value {
                     "default-on" => {
                         Ok("fdt set /leds/act linux,default-trigger default-on".to_string())
@@ -115,7 +115,7 @@ impl UBootConfigGenerator for DTparam {
                 }
                 _ => Err(anyhow!("Unsupported dtparam key: {}", config.key,)),
             }?;
-            commands.push(hoge);
+            commands.push(fdt_command);
         }
 
         dbg!(configs);
@@ -447,7 +447,7 @@ fn dtoverlay(i: &str) -> IResult<&str, ConfigEntry> {
     // 先頭がdtoverlay=なら改行が来るまで読み込む
     // ,で分割
     // 最初を除いて=で分割してvecに入れる
-    let (rest, mut hoge): (&str, Vec<&str>) = delimited(
+    let (rest, mut dtoverlays_str): (&str, Vec<&str>) = delimited(
         tag("dtoverlay="),
         separated_list0(
             tag(","),
@@ -455,9 +455,9 @@ fn dtoverlay(i: &str) -> IResult<&str, ConfigEntry> {
         ),
         multispace0,
     )(i)?;
-    let overlay = hoge.remove(0).to_string();
+    let overlay = dtoverlays_str.remove(0).to_string();
     let mut configs: Vec<Config> = Vec::new();
-    for c in hoge {
+    for c in dtoverlays_str {
         let config = config(c)?;
         configs.push(config.1);
     }
@@ -467,7 +467,7 @@ fn dtoverlay(i: &str) -> IResult<&str, ConfigEntry> {
 
 fn dtparam(i: &str) -> IResult<&str, ConfigEntry> {
     // dtparam=i2c_arm=on
-    let (rest, hoge) = delimited(
+    let (rest, dtparams_str) = delimited(
         tag("dtparam="),
         separated_list1(
             tag(","),
@@ -476,7 +476,7 @@ fn dtparam(i: &str) -> IResult<&str, ConfigEntry> {
         multispace0,
     )(i)?;
     let mut configs: Vec<Config> = Vec::new();
-    for c in hoge {
+    for c in dtparams_str {
         let config = config(c)?;
         configs.push(config.1);
     }
@@ -485,8 +485,8 @@ fn dtparam(i: &str) -> IResult<&str, ConfigEntry> {
 }
 
 fn gpumem(i: &str) -> IResult<&str, ConfigEntry> {
-    let (rest, hoge) = delimited(tag("gpu_mem="), digit1, multispace0)(i)?;
-    let memsize: (&str, usize) = map_res(recognize(digit1), str::parse)(hoge)?;
+    let (rest, gpumem_str) = delimited(tag("gpu_mem="), digit1, multispace0)(i)?;
+    let memsize: (&str, usize) = map_res(recognize(digit1), str::parse)(gpumem_str)?;
     let gpumem = ConfigEntry::GpuMem(GpuMem {
         total_ramsize: None,
         gpu_ramsize: memsize.1,
@@ -496,7 +496,7 @@ fn gpumem(i: &str) -> IResult<&str, ConfigEntry> {
 }
 
 fn gpumem_condition(i: &str) -> IResult<&str, ConfigEntry> {
-    let (rest, hoge) = delimited(
+    let (rest, gpumem_str) = delimited(
         tag("gpu_mem_"),
         separated_list1(
             tag("="),
@@ -505,8 +505,8 @@ fn gpumem_condition(i: &str) -> IResult<&str, ConfigEntry> {
         multispace0,
     )(i)?;
 
-    let total_memsize: (&str, usize) = map_res(recognize(digit1), str::parse)(hoge[0])?;
-    let gpu_memsize: (&str, usize) = map_res(recognize(digit1), str::parse)(hoge[1])?;
+    let total_memsize: (&str, usize) = map_res(recognize(digit1), str::parse)(gpumem_str[0])?;
+    let gpu_memsize: (&str, usize) = map_res(recognize(digit1), str::parse)(gpumem_str[1])?;
 
     let gpumem = ConfigEntry::GpuMem(GpuMem {
         total_ramsize: Some(total_memsize.1),
