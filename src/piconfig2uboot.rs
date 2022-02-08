@@ -27,8 +27,7 @@ fn main() -> Result<()> {
     let src = PathBuf::from(src);
     let dest = PathBuf::from(dest);
 
-    let mut piconfig = RPiConfig::new();
-    piconfig.load_from_config(&src)?;
+    let piconfig = RPiConfig::load_from_config(&src)?;
 
     let uenv = piconfig
         .convert_to_uboot_config("bootcfg".to_string())?

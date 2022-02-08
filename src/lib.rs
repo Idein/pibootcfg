@@ -9,7 +9,7 @@ use nom::{
     sequence::{delimited, preceded, separated_pair},
     AsChar, IResult,
 };
-use std::{collections::HashMap, fs, path::PathBuf};
+use std::{collections::HashMap, fs, path::Path};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum ConfigEntry {
@@ -312,15 +312,17 @@ impl RPiConfig {
     pub fn new() -> Self {
         RPiConfig { configs: None }
     }
-    pub fn load_from_config(&mut self, src: &PathBuf) -> Result<()> {
+
+    pub fn load_from_config(src: &Path) -> Result<Self> {
         // /boot/config.txt から RasPiの設定を読み込む
-        let config = fs::read_to_string(&src)
-            .with_context(|| format!("Failed to read config.txt from {:?}", &src))?;
+        let config = fs::read_to_string(src)
+            .with_context(|| format!("Failed to read config.txt from {:?}", src))?;
         // TODO: restに余りがあったらエラーにする
         let (_, configs) = parse(&config)
             .map_err(|err| anyhow::anyhow!("Failed to parse config.txt: {:?}", err))?;
-        self.configs = Some(configs);
-        Ok(())
+        Ok(Self {
+            configs: Some(configs),
+        })
     }
 
     pub fn convert_to_uboot_config(&self, envval_name: String) -> Result<Option<String>> {
