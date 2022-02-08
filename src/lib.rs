@@ -199,12 +199,10 @@ fn arrange_for_uboot(
 ) -> HashMap<String, Vec<ConfigEntry>> {
     let mut ubootconfigs: HashMap<String, Vec<ConfigEntry>> = HashMap::new();
 
-    for kv in piconfigs.iter() {
+    for (platform, configs) in piconfigs {
         // raspi bootloaderの荒い分類をu-bootのもう少し細かい分類に分け直す
         // raspi model: https://www.raspberrypi.com/documentation/computers/config_txt.html#model-filters
         // uboot model: https://github.com/u-boot/u-boot/blob/master/board/raspberrypi/rpi/rpi.c#L89
-        let platform = kv.0;
-        let configs = kv.1;
         match &**platform {
             "all" => {
                 ubootconfigs.insert("all".to_string(), (*configs).clone());
