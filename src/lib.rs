@@ -49,9 +49,8 @@ pub struct RPiConfig {
     configs: Option<HashMap<String, Vec<ConfigEntry>>>,
 }
 
-// TODO: U-Bootのconfigを現在は;で結合しているが、||や&&でも結合できるよう、戻り値をVec<String>から適切なものに変更する
-
 impl DTparam {
+    /// TODO: U-Bootのconfigを現在は;で結合しているが、||や&&でも結合できるよう、戻り値をVec<String>から適切なものに変更する
     fn generate_uboot_config(&self) -> Result<Vec<String>> {
         let configs = &self.configs;
         let mut commands = Vec::new();
@@ -195,11 +194,11 @@ impl GpuMem {
     }
 }
 
+/// config.txtを読み込んで作ったconfigをuboot向けにより細分化された状態にする関数
+/// 例: confitional filterのpi3はpi3 AとB両方を指すので、両方に設定が入るように分類する
 fn arrange_for_uboot(
     piconfigs: &HashMap<String, Vec<ConfigEntry>>,
 ) -> HashMap<String, Vec<ConfigEntry>> {
-    // config.txtを読み込んで作ったconfigをuboot向けにより細分化された状態にする関数
-    // 例: confitional filterのpi3はpi3 AとB両方を指すので、両方に設定が入るように分類する
     let mut ubootconfigs: HashMap<String, Vec<ConfigEntry>> = HashMap::new();
 
     for kv in piconfigs.iter() {
@@ -313,8 +312,8 @@ impl RPiConfig {
         RPiConfig { configs: None }
     }
 
+    /// /boot/config.txt から RasPiの設定を読み込む
     pub fn load_from_config(src: &Path) -> Result<Self> {
-        // /boot/config.txt から RasPiの設定を読み込む
         let config = fs::read_to_string(src)
             .with_context(|| format!("Failed to read config.txt from {}", src.display()))?;
         // TODO: restに余りがあったらエラーにする
@@ -325,9 +324,8 @@ impl RPiConfig {
         })
     }
 
+    /// configsの中身を読んで u-boot 向けのconfigを出力する
     pub fn convert_to_uboot_config(&self, envval_name: &str) -> Result<Option<String>> {
-        // configsの中身を読んで u-boot 向けのconfigを出力する
-
         let configs = arrange_for_uboot(match self.configs.as_ref() {
             Some(x) => x,
             None => return Ok(None),
