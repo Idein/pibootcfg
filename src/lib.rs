@@ -343,7 +343,7 @@ impl RPiConfig {
         // dtoverlay or dtparamの設定を抜き出す
         // 全ボード向けのdtoverlay or dtparam を設定する
         // 順番が大切な部分もあるので、必ずallが最初に来るようにすること
-        let supported_platforms = vec![
+        let supported_platforms = [
             "all",
             "Zero",
             "Zero W",
