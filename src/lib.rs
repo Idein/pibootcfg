@@ -316,7 +316,7 @@ impl RPiConfig {
     pub fn load_from_config(src: &Path) -> Result<Self> {
         // /boot/config.txt から RasPiの設定を読み込む
         let config = fs::read_to_string(src)
-            .with_context(|| format!("Failed to read config.txt from {:?}", src))?;
+            .with_context(|| format!("Failed to read config.txt from {}", src.display()))?;
         // TODO: restに余りがあったらエラーにする
         let (_, configs) = parse(&config)
             .map_err(|err| anyhow::anyhow!("Failed to parse config.txt: {:?}", err))?;
