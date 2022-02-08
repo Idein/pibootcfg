@@ -770,7 +770,7 @@ mod tests {
     #[test]
     fn test_convert_to_uboot_config() {
         let rpiconfig = RPiConfig {
-            configs: Some(HashMap::from([
+            configs: HashMap::from([
                 (
                     "all".to_string(),
                     vec![ConfigEntry::DTparam(DTparam {
@@ -787,7 +787,7 @@ mod tests {
                         configs: vec![],
                     })],
                 ),
-            ])),
+            ]),
         };
         let expected = vec!["setexpr fdt_ovaddr ${fdt_addr} + 0x40000",
         "fdt addr ${fdt_addr}",
@@ -821,14 +821,14 @@ mod tests {
         // TODO: gpu_memの設定を入れる
 
         let rpiconfig = RPiConfig {
-            configs: Some(HashMap::from([(
+            configs: HashMap::from([(
                 "all".to_string(),
                 vec![ConfigEntry::GpuMem(GpuMem {
                     total_ramsize: Some(1024),
                     gpu_ramsize: 128,
                     model: None,
                 })],
-            )])),
+            )]),
         };
         let expected = vec![
             "setexpr fdt_ovaddr ${fdt_addr} + 0x40000",
