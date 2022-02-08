@@ -8,6 +8,10 @@ authors = ["Toshifumi NISHINAGA <tnishinaga.dev@gmail.com>"]
 name = "pibootcfg"
 path = "src/lib.rs"
 
+[[bin]]
+name = "piconfig2uboot"
+path = "src/piconfig2uboot.rs"
+
 [dependencies]
 log = "0.4.14"
 nom = "7.1.0"
