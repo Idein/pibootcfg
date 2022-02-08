@@ -150,8 +150,6 @@ impl DTOverlay {
 
 impl GpuMem {
     fn generate_uboot_config(&self) -> Result<Vec<String>> {
-        // gpu_mem_*に対応したuboot configを出す
-        let mut commands: Vec<String> = Vec::new();
         // TODO: total_ramsizeが0の場合（gpu_mem=*）に対応する
         let total_ramsize = self
             .total_ramsize
@@ -164,27 +162,25 @@ impl GpuMem {
             .ok_or(anyhow!("gpu_ramsize must be smaller than total_ramsize"))?;
 
         match &self.model {
-            Some(model) => match &**model {
-                "4 Model B" | "400" | "Compute Module 4" => {
-                    commands.push(format!(
+            Some(model) => match model.as_ref() {
+                "4 Model B" | "400" | "Compute Module 4" => Ok(vec![
+                    format!(
                         "fdt set / memreserve < {:#x} {:#x} >",
                         cpu_ramsize, gpu_ramsize,
-                    ));
-                    commands.push(format!(
+                    ),
+                    format!(
                         "fdt set /memory@0 reg < 0x00 0x00 {:#x} 0x00 0x40000000 0xbc000000 >",
                         cpu_ramsize
-                    ));
-                    Ok(commands)
-                }
+                    ),
+                ]),
                 "3 Model B" | "3 Model B+" | "3 Model A+" | "Compute Module 3"
-                | "Compute Module 3+" => {
-                    commands.push(format!(
+                | "Compute Module 3+" => Ok(vec![
+                    format!(
                         "fdt set / memreserve < {:#x} {:#x} >",
                         cpu_ramsize, gpu_ramsize,
-                    ));
-                    commands.push(format!("fdt set /memory@0 reg < 0x00 {:#x} >", cpu_ramsize,));
-                    Ok(commands)
-                }
+                    ),
+                    format!("fdt set /memory@0 reg < 0x00 {:#x} >", cpu_ramsize,),
+                ]),
                 // "Zero" | "Zero W" => todo!(),
                 _ => Err(anyhow!(
                     "Unsupported platform: {:?}, command: gpu_mem",
