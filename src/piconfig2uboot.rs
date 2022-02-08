@@ -1,6 +1,6 @@
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result};
 use pibootcfg::RPiConfig;
-use std::{env, fs::File, io::Write, path::PathBuf, str::FromStr};
+use std::{env, fs::File, io::Write, path::PathBuf};
 
 fn usage() {
     println!("usage:");
