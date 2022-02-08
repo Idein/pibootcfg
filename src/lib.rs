@@ -205,32 +205,32 @@ fn arrange_for_uboot(
         // uboot model: https://github.com/u-boot/u-boot/blob/master/board/raspberrypi/rpi/rpi.c#L89
         match &**platform {
             "all" => {
-                ubootconfigs.insert("all".to_string(), (*configs).clone());
+                ubootconfigs.insert("all".to_string(), configs.clone());
             }
             "pi3" => {
-                ubootconfigs.insert("3 Model B".to_string(), (*configs).clone());
-                ubootconfigs.insert("3 Model B+".to_string(), (*configs).clone());
-                ubootconfigs.insert("3 Model A+".to_string(), (*configs).clone());
-                ubootconfigs.insert("Compute Module 3".to_string(), (*configs).clone());
-                ubootconfigs.insert("Compute Module 3+".to_string(), (*configs).clone());
+                ubootconfigs.insert("3 Model B".to_string(), configs.clone());
+                ubootconfigs.insert("3 Model B+".to_string(), configs.clone());
+                ubootconfigs.insert("3 Model A+".to_string(), configs.clone());
+                ubootconfigs.insert("Compute Module 3".to_string(), configs.clone());
+                ubootconfigs.insert("Compute Module 3+".to_string(), configs.clone());
             }
             "pi3+" => {
-                ubootconfigs.insert("3 Model B+".to_string(), (*configs).clone());
-                ubootconfigs.insert("3 Model A+".to_string(), (*configs).clone());
+                ubootconfigs.insert("3 Model B+".to_string(), configs.clone());
+                ubootconfigs.insert("3 Model A+".to_string(), configs.clone());
             }
             "pi4" => {
-                ubootconfigs.insert("4 Model B".to_string(), (*configs).clone());
-                ubootconfigs.insert("400".to_string(), (*configs).clone());
-                ubootconfigs.insert("Compute Module 4".to_string(), (*configs).clone());
+                ubootconfigs.insert("4 Model B".to_string(), configs.clone());
+                ubootconfigs.insert("400".to_string(), configs.clone());
+                ubootconfigs.insert("Compute Module 4".to_string(), configs.clone());
             }
             "pi0" => {
-                ubootconfigs.insert("Zero".to_string(), (*configs).clone());
-                ubootconfigs.insert("Zero W".to_string(), (*configs).clone());
-                ubootconfigs.insert("Zero 2 W".to_string(), (*configs).clone());
+                ubootconfigs.insert("Zero".to_string(), configs.clone());
+                ubootconfigs.insert("Zero W".to_string(), configs.clone());
+                ubootconfigs.insert("Zero 2 W".to_string(), configs.clone());
             }
             "pi0w" => {
-                ubootconfigs.insert("Zero W".to_string(), (*configs).clone());
-                ubootconfigs.insert("Zero 2 W".to_string(), (*configs).clone());
+                ubootconfigs.insert("Zero W".to_string(), configs.clone());
+                ubootconfigs.insert("Zero 2 W".to_string(), configs.clone());
             }
             _ => {
                 // TODO: 必要ならErrを出す？
