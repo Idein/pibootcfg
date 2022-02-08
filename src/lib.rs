@@ -52,59 +52,61 @@ pub struct RPiConfig {
 impl DTparam {
     /// TODO: U-Bootのconfigを現在は;で結合しているが、||や&&でも結合できるよう、戻り値をVec<String>から適切なものに変更する
     fn generate_uboot_config(&self) -> Result<Vec<String>> {
-        let configs = &self.configs;
         let mut commands = Vec::new();
 
-        fn dtparam_error(key: &String, value: &String) -> Result<String> {
+        fn dtparam_error(key: &str, value: &str) -> Result<String> {
             Err(anyhow!("Unsupported dtparam option: {}={}", key, value))
         }
 
-        for config in configs {
-            let fdt_command: String = match &*config.key {
-                "act_led_trigger" => match &*config.value {
+        for (key, value) in self
+            .configs
+            .iter()
+            .map(|Config { key, value }| (key.as_ref(), value.as_ref()))
+        {
+            let fdt_command: String = match key {
+                "act_led_trigger" => match value {
                     "default-on" => {
                         Ok("fdt set /leds/act linux,default-trigger default-on".to_string())
                     }
-                    _ => dtparam_error(&config.key, &config.value),
+                    _ => dtparam_error(&key, &value),
                 },
-                "audio" => match &*config.value {
+                "audio" => match value {
                     "on" => Ok("fdt set /soc/audio status okay".to_string()),
-                    _ => dtparam_error(&config.key, &config.value),
+                    _ => dtparam_error(&key, &value),
                 },
-                "i2c_arm" => match &*config.value {
+                "i2c_arm" => match value {
                     "on" => Ok("fdt set i2c_arm status okay".to_string()),
-                    _ => dtparam_error(&config.key, &config.value),
+                    _ => dtparam_error(&key, &value),
                 },
-                "i2s" => match &*config.value {
+                "i2s" => match value {
                     "on" => Ok("fdt set i2s status okay".to_string()),
-                    _ => dtparam_error(&config.key, &config.value),
+                    _ => dtparam_error(&key, &value),
                 },
-                "pwr_led_activelow" => match &*config.value {
+                "pwr_led_activelow" => match value {
                     // https://patchwork.ozlabs.org/project/uboot/patch/1496149544-32348-1-git-send-email-hannes.schmelzer@br-automation.com/
                     "off" => Ok("fdt set /leds/pwr gpios < ? ? 0x00 >".to_string()),
                     "on" => Ok("fdt set /leds/pwr gpios < ? ? 0x01 >".to_string()),
-                    _ => dtparam_error(&config.key, &config.value),
+                    _ => dtparam_error(&key, &value),
                 },
-                "pwr_led_trigger" => match &*config.value {
+                "pwr_led_trigger" => match value {
                     "none" => Ok("fdt set /leds/pwr linux,default-trigger none".to_string()),
-                    _ => dtparam_error(&config.key, &config.value),
+                    _ => dtparam_error(&key, &value),
                 },
-                "spi" => match &*config.value {
+                "spi" => match value {
                     "on" => Ok("fdt set spi0 status okay".to_string()),
-                    _ => dtparam_error(&config.key, &config.value),
+                    _ => dtparam_error(&key, &value),
                 },
-                "watchdog" => match &*config.value {
+                "watchdog" => match value {
                     "on" => Ok("fdt set watchdog status okay".to_string()),
-                    _ => dtparam_error(&config.key, &config.value),
+                    _ => dtparam_error(&key, &value),
                 },
                 "i2c_arm_baudrate" => {
-                    let baudrate: u32 = config
-                        .value
+                    let baudrate: u32 = value
                         .parse()
                         .map_err(|err| anyhow!("Invalid i2c clock-frequency: {}", err))?;
                     Ok(format!("fdt set i2c clock-frequency < {:#x} >", baudrate))
                 }
-                _ => Err(anyhow!("Unsupported dtparam key: {}", config.key,)),
+                _ => Err(anyhow!("Unsupported dtparam key: {}", key)),
             }?;
             commands.push(fdt_command);
         }
