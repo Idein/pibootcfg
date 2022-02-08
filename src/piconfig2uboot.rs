@@ -30,7 +30,7 @@ fn main() -> Result<()> {
     let piconfig = RPiConfig::load_from_config(&src)?;
 
     let uenv = piconfig
-        .convert_to_uboot_config("bootcfg".to_string())?
+        .convert_to_uboot_config("bootcfg")?
         .unwrap_or(format!("bootcfg=\"echo nothing to do\""));
 
     let mut file = File::create(&dest).with_context(|| format!("failed to create {:?}", dest))?;

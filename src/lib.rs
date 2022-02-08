@@ -325,7 +325,7 @@ impl RPiConfig {
         })
     }
 
-    pub fn convert_to_uboot_config(&self, envval_name: String) -> Result<Option<String>> {
+    pub fn convert_to_uboot_config(&self, envval_name: &str) -> Result<Option<String>> {
         // configsの中身を読んで u-boot 向けのconfigを出力する
 
         let configs = arrange_for_uboot(match self.configs.as_ref() {
@@ -812,7 +812,7 @@ mod tests {
         let expected = format!("bootconfig={}", expected.join(";"));
 
         let output = rpiconfig
-            .convert_to_uboot_config("bootconfig".to_string())
+            .convert_to_uboot_config("bootconfig")
             .unwrap()
             .unwrap();
         assert_eq!(expected, output);
@@ -875,7 +875,7 @@ mod tests {
         let expected = format!("bootconfig={}", expected.join(";"));
 
         let output = rpiconfig
-            .convert_to_uboot_config("bootconfig".to_string())
+            .convert_to_uboot_config("bootconfig")
             .unwrap()
             .unwrap();
         assert_eq!(expected, output);
