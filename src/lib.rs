@@ -46,7 +46,7 @@ pub struct DTparam {
 }
 
 pub struct RPiConfig {
-    configs: Option<HashMap<String, Vec<ConfigEntry>>>,
+    configs: HashMap<String, Vec<ConfigEntry>>,
 }
 
 impl DTparam {
@@ -309,7 +309,9 @@ fn arrange_for_uboot(
 
 impl RPiConfig {
     pub fn new() -> Self {
-        RPiConfig { configs: None }
+        RPiConfig {
+            configs: HashMap::new(),
+        }
     }
 
     /// /boot/config.txt から RasPiの設定を読み込む
@@ -319,17 +321,16 @@ impl RPiConfig {
         // TODO: restに余りがあったらエラーにする
         let (_, configs) = parse(&config)
             .map_err(|err| anyhow::anyhow!("Failed to parse config.txt: {:?}", err))?;
-        Ok(Self {
-            configs: Some(configs),
-        })
+        Ok(Self { configs })
     }
 
     /// configsの中身を読んで u-boot 向けのconfigを出力する
     pub fn convert_to_uboot_config(&self, envval_name: &str) -> Result<Option<String>> {
-        let configs = arrange_for_uboot(match self.configs.as_ref() {
-            Some(x) => x,
-            None => return Ok(None),
-        });
+        if self.configs.is_empty() {
+            return Ok(None);
+        }
+
+        let configs = arrange_for_uboot(&self.configs);
 
         let mut commands: Vec<String> = Vec::new();
 
