@@ -13,6 +13,23 @@ on: [push]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  armv6hf-static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: build static
+        run: |
+          docker run --rm -v `pwd`:/work dockcross/linux-armv6-musl /bin/bash -c ' \
+            curl https://sh.rustup.rs -sSf | sh -s -- -y \
+            && . ~/.cargo/env \
+            && rustup target add arm-unknown-linux-musleabihf \
+            && cargo build --release --target=arm-unknown-linux-musleabihf \
+          '
+      - uses: actions/upload-artifact@v2
+        with:
+          name: piconfig2uboot_armv6hf_static
+          path: target/arm-unknown-linux-musleabihf/release/piconfig2uboot
+
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
