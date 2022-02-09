@@ -4,7 +4,13 @@ name = "pibootcfg"
 version = "0.1.0"
 authors = ["Toshifumi NISHINAGA <tnishinaga.dev@gmail.com>"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "pibootcfg"
+path = "src/lib.rs"
+
+[[bin]]
+name = "piconfig2uboot"
+path = "src/piconfig2uboot.rs"
 
 [dependencies]
 log = "0.4.14"
