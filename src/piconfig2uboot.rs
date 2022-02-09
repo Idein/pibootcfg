@@ -1,6 +1,6 @@
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result};
 use pibootcfg::RPiConfig;
-use std::{env, fs::File, io::Write, path::PathBuf, str::FromStr};
+use std::{env, fs, path::PathBuf};
 
 fn usage() {
     println!("usage:");
@@ -27,16 +27,13 @@ fn main() -> Result<()> {
     let src = PathBuf::from(src);
     let dest = PathBuf::from(dest);
 
-    let mut piconfig = RPiConfig::new();
-    piconfig.load_from_config(&src)?;
+    let piconfig = RPiConfig::load_from_config(&src)?;
 
     let uenv = piconfig
-        .convert_to_uboot_config("bootcfg".to_string())?
+        .convert_to_uboot_config("bootcfg")?
         .unwrap_or(format!("bootcfg=\"echo nothing to do\""));
 
-    let mut file = File::create(&dest).with_context(|| format!("failed to create {:?}", dest))?;
-    file.write_all(uenv.as_bytes())
-        .with_context(|| format!("failed to write u-boot config to {:?}", dest))?;
-
+    fs::write(&dest, uenv.as_bytes())
+        .with_context(|| format!("failed to write u-boot config to {}", dest.display()))?;
     Ok(())
 }
