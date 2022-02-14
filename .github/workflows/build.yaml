@@ -69,6 +69,10 @@ jobs:
           curl https://sh.rustup.rs -sSf | sh -s -- -y
           source ~/.cargo/env
           cargo install cargo-bundle-licenses
+          cargo install --locked cargo-deny
+      - name: check license requirements
+        run: |
+          cargo deny check
       - name: generate license file
         run: |
           python3 create_license.py
