@@ -93,6 +93,11 @@ jobs:
       - name: generate license file
         run: |
           python3 create_license.py
+      - name: append musl license
+        run: |
+          echo "## musl" >> THIRD_PARTY_LIBRARY_LICENSES
+          echo "" >> THIRD_PARTY_LIBRARY_LICENSES
+          curl https://git.musl-libc.org/cgit/musl/plain/COPYRIGHT >> THIRD_PARTY_LIBRARY_LICENSES
       - uses: actions/upload-artifact@v2
         with:
           name: THIRD_PARTY_LIBRARY_LICENSES
