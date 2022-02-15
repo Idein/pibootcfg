@@ -3,6 +3,7 @@ edition = "2021"
 name = "pibootcfg"
 version = "0.1.0"
 authors = ["Toshifumi NISHINAGA <tnishinaga.dev@gmail.com>"]
+license = "MIT"
 
 [lib]
 name = "pibootcfg"
